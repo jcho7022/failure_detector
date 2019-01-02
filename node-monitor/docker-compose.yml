@@ -1,0 +1,19 @@
+version: '3.4'
+services:
+  node-monitor-service:
+    build:
+      context: .
+    network_mode: "host" 
+    ports:
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - LOCAL_RESP_IP_PORT=0.0.0.0:8080
+      - REMOTE_MONITOR_IP_PORT=0.0.0.0:6060
+      - NOTIFICATION_EMAIL=
+      - NOTIFICATION_EMAIL_PASSWORD=
+      - SUBJECT_EMAIL=
+      - CONTEXT=
+      - GOPATH=/root/go
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/go/bin:/root/go/bin:/root/go/bin

@@ -10,14 +10,12 @@ import (
 
 
 func main() {
-	// Local (127.0.0.1) hardcoded IPs to simplify testing.
 	localIpPort := os.Getenv("LOCAL_RESP_IP_PORT")
-	toMonitorIpPort := os.Getenv("REMOTE_MONITOR_IP_PORT") // TODO: change this to remote node
-	var lostMsgThresh uint8 = 5
+	toMonitorIpPort := os.Getenv("REMOTE_MONITOR_IP_PORT")
+	var lostMsgThresh uint64 = 1000 // aprox 16 minute timeout
 
-	// TODO: generate a new random epoch nonce on each run
 	var epochNonce uint64 = 12345
-	var chCapacity uint8 = 5
+	var chCapacity uint8 = 128
 
 	// Initialize fdlib. Note the use of multiple assignment:
 	// https://gobyexample.com/multiple-return-values
@@ -39,7 +37,7 @@ func main() {
 	log.Println("Started responding to heartbeats.")
 
 	// Add a monitor for a remote node.
-	localIpPortMon := "127.0.0.1:9090"
+	localIpPortMon := os.Getenv("LOCAL_RECIVE_IP_PORT")
 	err = fd.AddMonitor(localIpPortMon, toMonitorIpPort, lostMsgThresh)
 	if checkError(err) != nil {
 		return

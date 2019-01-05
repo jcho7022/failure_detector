@@ -26,7 +26,7 @@ func TestInitialize(t *testing.T) {
 }
 
 func TestTimeout(t *testing.T) {
-	var lostMsgThresh uint8 = 3
+	var lostMsgThresh uint64 = 3
 	fd.AddMonitor("127.0.0.1:41234","127.0.0.1:53252",lostMsgThresh)
 	select {
         case _ = <-notifyCh:
@@ -40,7 +40,7 @@ func TestTimeout(t *testing.T) {
 
 
 func TestStartRespStopResp(t *testing.T) {
-	var lostMsgThresh uint8 = 12
+	var lostMsgThresh uint64 = 12
 	err := fd.StartResponding("127.0.0.1:19999")
 	defer fd.StopMonitoring()
         if err != nil{

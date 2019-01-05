@@ -16,8 +16,8 @@ type failDetector struct {
 }
 
 var (
-	netDebug            = true
-	hbmDebug            = true
+	netDebug            = false
+	hbmDebug            = false
 	NotifyCh            chan FailureDetected
 	chCapacity          uint8
 	conn                *net.UDPConn
@@ -37,7 +37,7 @@ type NodeCluster struct {
 
 type Node struct {
 	nodeChan      chan AckMessage
-	lostMsgThresh uint8
+	lostMsgThresh uint64
 	alive         bool
 }
 
@@ -68,7 +68,7 @@ type FailureDetected struct {
 type FD interface {
 	StartResponding(LocalIpPort string) (err error)
 	StopResponding()
-	AddMonitor(LocalIpPort string, RemoteIpPort string, LostMsgThresh uint8) (err error)
+	AddMonitor(LocalIpPort string, RemoteIpPort string, LostMsgThresh uint64) (err error)
 	RemoveMonitor(RemoteIpPort string)
 	StopMonitoring()
 }
@@ -94,7 +94,7 @@ func (fd failDetector) StopResponding() {
 	}
 }
 
-func (fd failDetector) AddMonitor(LocalIpPort string, RemoteIpPort string, LostMsgThresh uint8) (err error) {
+func (fd failDetector) AddMonitor(LocalIpPort string, RemoteIpPort string, LostMsgThresh uint64) (err error) {
 	node := &Node{lostMsgThresh: LostMsgThresh, nodeChan: make(chan AckMessage), alive: true}
 	var RTT *RTTRecord
 	if _, ok := RTTRecordMap[RemoteIpPort]; ok {
@@ -155,7 +155,7 @@ func monitorNodeCluster(nodeCluster *NodeCluster) {
 }
 
 func monitorNode(node *Node, listeningConn *net.UDPConn, RemoteIpPort string, nodeRTT *RTTRecord) {
-	var lostMsg uint8 = 0
+	var lostMsg uint64 = 0
 	var hBeatRecordMap map[uint64]HBeatMessageRecord = make(map[uint64]HBeatMessageRecord)
 	var seqNum uint64
 	var start time.Time
